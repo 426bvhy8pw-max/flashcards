@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Flashcards">
+<meta name="theme-color" content="#f2f2f7">
+<title>Flashcards</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #f2f2f7;
+    --card: #ffffff;
+    --card-dark: #1c1c1e;
+    --text: #1c1c1e;
+    --text2: #6c6c70;
+    --text3: #aeaeb2;
+    --sep: #e5e5ea;
+    --blue: #007aff;
+    --green: #34c759;
+    --red: #ff3b30;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --card: #1c1c1e;
+      --card-dark: #2c2c2e;
+      --text: #ffffff;
+      --text2: #8e8e93;
+      --text3: #48484a;
+      --sep: #38383a;
+    }
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+    color: var(--text);
+    overscroll-behavior: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+    max-width: 430px;
+    margin: 0 auto;
+  }
+
+  /* VIEWS */
+  .view { display: none; flex-direction: column; height: 100%; overflow: hidden; }
+  .view.active { display: flex; }
+
+  /* NAV BAR */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px 8px;
+    min-height: 52px;
+    flex-shrink: 0;
+  }
+  .nav-title { font-size: 17px; font-weight: 600; color: var(--text); }
+  .nav-large { font-size: 28px; font-weight: 700; color: var(--text); padding: 4px 16px 12px; flex-shrink: 0; }
+  .nav-btn {
+    font-size: 17px; color: var(--blue); background: none; border: none;
+    cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 4px;
+    font-family: inherit; min-width: 60px;
+  }
+  .nav-btn.right { justify-content: flex-end; }
+  .nav-btn.icon-btn { min-width: 36px; width: 36px; height: 36px; background: var(--card); border-radius: 50%; justify-content: center; }
+
+  /* SCROLL AREA */
+  .scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+  /* LIST GROUPS */
+  .section-label {
+    font-size: 13px; font-weight: 600; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 16px 16px 6px;
+  }
+  .list-group {
+    margin: 0 16px 8px;
+    background: var(--card);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .list-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--sep);
+    cursor: pointer;
+    transition: background 0.1s;
+    text-decoration: none; color: inherit;
+  }
+  .list-row:last-child { border-bottom: none; }
+  .list-row:active { background: var(--bg); }
+
+  .deck-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .deck-info { flex: 1; }
+  .deck-name { font-size: 16px; font-weight: 500; color: var(--text); }
+  .deck-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
+  .row-chevron { color: var(--text3); font-size: 13px; font-weight: 600; }
+
+  /* STUDY VIEW */
+  .study-top { flex-shrink: 0; padding: 0 16px 4px; }
+  .progress-track {
+    height: 4px; background: var(--sep); border-radius: 2px; overflow: hidden; margin-bottom: 8px;
+  }
+  .progress-fill {
+    height: 100%; background: var(--blue); border-radius: 2px;
+    transition: width 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+  .card-counter { font-size: 13px; color: var(--text2); text-align: center; margin-bottom: 10px; }
+
+  /* FLASHCARD */
+  .card-area {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 0 16px; justify-content: center;
+  }
+  .flip-wrap {
+    perspective: 1000px; margin-bottom: 16px;
+    cursor: pointer;
+  }
+  .flip-inner {
+    position: relative; width: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
+    border-radius: 18px;
+  }
+  .flip-inner.flipped { transform: rotateY(180deg); }
+  .flip-face {
+    width: 100%; border-radius: 18px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    padding: 28px 24px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; min-height: 240px;
+  }
+  .flip-front { background: var(--card); }
+  .flip-back {
+    background: var(--card-dark);
+    position: absolute; top: 0; left: 0;
+    transform: rotateY(180deg);
+  }
+  .face-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+  .flip-front .face-label { color: var(--blue); }
+  .flip-back .face-label { color: #636366; }
+  .face-q { font-size: 20px; font-weight: 500; color: var(--text); line-height: 1.4; }
+  .face-a { font-size: 16px; color: #f2f2f7; line-height: 1.65; white-space: pre-wrap; }
+  .tap-hint { font-size: 13px; color: var(--text3); margin-top: 14px; }
+
+  /* BUTTONS */
+  .btn-row { display: flex; gap: 10px; padding: 0 16px 16px; flex-shrink: 0; }
+  .btn {
+    flex: 1; height: 52px; border-radius: 14px; border: none;
+    font-size: 16px; font-weight: 600; cursor: pointer;
+    font-family: inherit; display: flex; align-items: center;
+    justify-content: center; gap: 6px; transition: opacity 0.12s, transform 0.12s;
+  }
+  .btn:active { opacity: 0.75; transform: scale(0.97); }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-gray { background: var(--card); color: var(--text); }
+  .btn-full { width: 100%; flex: none; }
+
+  /* DONE CARD */
+  .done-wrap { padding: 16px; }
+  .done-card {
+    background: var(--card); border-radius: 18px;
+    padding: 32px 24px; text-align: center;
+  }
+  .done-emoji { font-size: 52px; margin-bottom: 12px; }
+  .done-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .done-sub { font-size: 15px; color: var(--text2); margin-bottom: 24px; }
+  .stat-row { display: flex; gap: 10px; margin-bottom: 24px; }
+  .stat-box {
+    flex: 1; background: var(--bg); border-radius: 12px;
+    padding: 12px; text-align: center;
+  }
+  .stat-num { font-size: 26px; font-weight: 700; display: block; }
+  .stat-lbl { font-size: 12px; color: var(--text2); margin-top: 2px; display: block; }
+
+  /* ADD CARD VIEW */
+  .add-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 20px; }
+  .form-group {
+    margin: 0 16px 8px;
+    background: var(--card); border-radius: 12px; overflow: hidden;
+  }
+  .form-row {
+    padding: 10px 16px;
+    border-bottom: 0.5px solid var(--sep);
+  }
+  .form-row:last-child { border-bottom: none; }
+  .form-lbl { font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 3px; }
+  .form-input {
+    font-size: 16px; color: var(--text); border: none; outline: none;
+    background: transparent; font-family: inherit; width: 100%;
+    resize: none; line-height: 1.5;
+  }
+  .form-input::placeholder { color: var(--text3); }
+
+  .deck-opt {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-bottom: 0.5px solid var(--sep); cursor: pointer;
+  }
+  .deck-opt:last-child { border-bottom: none; }
+  .deck-opt:active { background: var(--bg); }
+  .deck-opt-name { flex: 1; font-size: 16px; color: var(--text); }
+  .check-mark { color: var(--blue); font-size: 18px; font-weight: 700; }
+
+  .save-btn-wrap { padding: 8px 16px 4px; }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center; padding: 60px 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .empty-icon { font-size: 44px; margin-bottom: 4px; }
+  .empty-title { font-size: 18px; font-weight: 600; color: var(--text); }
+  .empty-sub { font-size: 15px; color: var(--text2); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: calc(var(--safe-bottom) + 20px);
+    left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1c1c1e; color: #fff; font-size: 14px; font-weight: 500;
+    padding: 10px 20px; border-radius: 20px;
+    opacity: 0; transition: all 0.25s; pointer-events: none; white-space: nowrap;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <div id="view-home" class="view active">
+    <div class="nav">
+      <span style="min-width:60px"></span>
+      <span class="nav-title">Flashcards</span>
+      <button class="nav-btn right" onclick="goAdd()">+ Add</button>
+    </div>
+    <div class="nav-large">My Decks</div>
+    <div class="scroll" id="home-scroll">
+      <div class="section-label">Decks</div>
+      <div class="list-group" id="deck-list"></div>
+    </div>
+  </div>
+
+  <!-- STUDY -->
+  <div id="view-study" class="view">
+    <div class="nav">
+      <button class="nav-btn" onclick="goHome()">‹ Decks</button>
+      <span class="nav-title" id="study-title"></span>
+      <span style="min-width:60px"></span>
+    </div>
+    <div class="study-top">
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="card-counter" id="study-counter"></div>
+    </div>
+    <div id="study-body" class="card-area"></div>
+    <div id="study-btns" class="btn-row"></div>
+  </div>
+
+  <!-- ADD CARD -->
+  <div id="view-add" class="view">
+    <div class="nav">
+      <button class="nav-btn" onclick="goHome()">‹ Back</button>
+      <span class="nav-title">New Card</span>
+      <span style="min-width:60px"></span>
+    </div>
+    <div class="add-scroll">
+      <div class="section-label">Deck</div>
+      <div class="list-group" id="deck-opts"></div>
+
+      <div class="section-label" style="margin-top:8px">Question</div>
+      <div class="form-group">
+        <div class="form-row">
+          <div class="form-lbl">What do you want to be tested on?</div>
+          <textarea class="form-input" id="inp-q" rows="3" placeholder="e.g. Steps to restart the system"></textarea>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:8px">Answer</div>
+      <div class="form-group">
+        <div class="form-row">
+          <div class="form-lbl">The correct answer or procedure</div>
+          <textarea class="form-input" id="inp-a" rows="5" placeholder="e.g. 1. Turn off power&#10;2. Wait 30 seconds&#10;3. Restart"></textarea>
+        </div>
+      </div>
+
+      <div class="save-btn-wrap">
+        <button class="btn btn-blue btn-full" id="save-btn" onclick="saveCard()">Save card</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const DECKS = [
+  { id: 'procedures', name: 'Procedures', icon: '📋', bg: '#e8f4fd' },
+  { id: 'safety',     name: 'Safety',     icon: '🦺', bg: '#fff3e0' },
+  { id: 'technical',  name: 'Technical',  icon: '⚙️',  bg: '#f3e5f5' },
+  { id: 'general',    name: 'General',    icon: '📚', bg: '#e8f5e9' },
+];
+
+let cards = [];
+let selDeck = 'procedures';
+let study = {};
+
+// Storage: tries localStorage, then IndexedDB, then in-memory
+const DB_NAME = 'wfc_db', DB_STORE = 'cards', DB_KEY = 'all';
+let idb = null;
+
+function openIDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(DB_STORE);
+    req.onsuccess = e => res(e.target.result);
+    req.onerror = () => rej();
+  });
+}
+
+async function loadCards() {
+  // Try localStorage first
+  try {
+    const raw = localStorage.getItem('wfc_cards');
+    if (raw) { cards = JSON.parse(raw); return; }
+  } catch(e) {}
+  // Try IndexedDB
+  try {
+    idb = await openIDB();
+    const tx = idb.transaction(DB_STORE, 'readonly');
+    const req = tx.objectStore(DB_STORE).get(DB_KEY);
+    await new Promise(res => { req.onsuccess = res; req.onerror = res; });
+    if (req.result) { cards = req.result; return; }
+  } catch(e) {}
+  cards = [];
+}
+
+async function persist() {
+  const data = JSON.stringify(cards);
+  // Write to both storages so whichever works will have the data
+  try { localStorage.setItem('wfc_cards', data); } catch(e) {}
+  try {
+    if (!idb) idb = await openIDB();
+    const tx = idb.transaction(DB_STORE, 'readwrite');
+    tx.objectStore(DB_STORE).put(cards, DB_KEY);
+  } catch(e) {}
+}
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goHome() {
+  renderHome();
+  showView('view-home');
+}
+function goAdd() {
+  selDeck = selDeck || 'procedures';
+  renderAddView();
+  showView('view-add');
+  setTimeout(() => document.getElementById('inp-q').focus(), 300);
+}
+
+function renderHome() {
+  const el = document.getElementById('deck-list');
+  el.innerHTML = DECKS.map(d => {
+    const n = cards.filter(c => c.deck === d.id).length;
+    return `<div class="list-row" onclick="startStudy('${d.id}')">
+      <div class="deck-icon" style="background:${d.bg}">${d.icon}</div>
+      <div class="deck-info">
+        <div class="deck-name">${d.name}</div>
+        <div class="deck-sub">${n} card${n !== 1 ? 's' : ''}</div>
+      </div>
+      <span class="row-chevron">›</span>
+    </div>`;
+  }).join('');
+}
+
+function renderAddView() {
+  document.getElementById('deck-opts').innerHTML = DECKS.map(d => `
+    <div class="deck-opt" onclick="pickDeck('${d.id}')">
+      <span style="font-size:20px">${d.icon}</span>
+      <span class="deck-opt-name">${d.name}</span>
+      ${selDeck === d.id ? '<span class="check-mark">✓</span>' : ''}
+    </div>`).join('');
+}
+
+function pickDeck(id) {
+  selDeck = id;
+  renderAddView();
+}
+
+function saveCard() {
+  const q = document.getElementById('inp-q').value.trim();
+  const a = document.getElementById('inp-a').value.trim();
+  if (!q || !a) { showToast('Add a question and answer first'); return; }
+  cards.push({ id: Date.now(), deck: selDeck, q, a });
+  persist();
+  document.getElementById('inp-q').value = '';
+  document.getElementById('inp-a').value = '';
+  showToast('Card saved ✓');
+  goHome();
+}
+
+function startStudy(deckId) {
+  const deck = DECKS.find(d => d.id === deckId);
+  const pool = cards.filter(c => c.deck === deckId);
+  document.getElementById('study-title').textContent = deck.name;
+  if (pool.length === 0) {
+    showView('view-study');
+    document.getElementById('prog-fill').style.width = '0%';
+    document.getElementById('study-counter').textContent = '';
+    document.getElementById('study-body').innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No cards yet</div>
+        <div class="empty-sub">Tap "+ Add" to create your first card.</div>
+      </div>`;
+    document.getElementById('study-btns').innerHTML = `
+      <button class="btn btn-blue btn-full" onclick="goAdd()">Add a card</button>`;
+    return;
+  }
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  study = { deck: deckId, queue: shuffled, idx: 0, flipped: false, correct: 0, again: 0 };
+  showView('view-study');
+  renderStudyCard();
+}
+
+function renderStudyCard() {
+  const { queue, idx } = study;
+  const total = queue.length;
+  document.getElementById('prog-fill').style.width = Math.round((idx / total) * 100) + '%';
+  document.getElementById('study-counter').textContent = `${idx + 1} of ${total}`;
+  study.flipped = false;
+  const card = queue[idx];
+  document.getElementById('study-body').innerHTML = `
+    <div class="flip-wrap" onclick="flipCard()">
+      <div class="flip-inner" id="flip-inner">
+        <div class="flip-face flip-front">
+          <div class="face-label">Question</div>
+          <div class="face-q">${escHtml(card.q)}</div>
+          <div class="tap-hint">Tap to reveal answer</div>
+        </div>
+        <div class="flip-face flip-back">
+          <div class="face-label">Answer</div>
+          <div class="face-a">${escHtml(card.a)}</div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('study-btns').innerHTML = `
+    <button class="btn btn-blue btn-full" onclick="flipCard()">Reveal answer</button>`;
+}
+
+function flipCard() {
+  const inner = document.getElementById('flip-inner');
+  if (!inner) return;
+  study.flipped = !study.flipped;
+  inner.classList.toggle('flipped', study.flipped);
+  if (study.flipped) {
+    document.getElementById('study-btns').innerHTML = `
+      <button class="btn btn-red" onclick="markCard(false)">Again</button>
+      <button class="btn btn-green" onclick="markCard(true)">Got it ✓</button>`;
+  } else {
+    document.getElementById('study-btns').innerHTML = `
+      <button class="btn btn-blue btn-full" onclick="flipCard()">Reveal answer</button>`;
+  }
+}
+
+function markCard(ok) {
+  if (ok) study.correct++; else study.again++;
+  study.idx++;
+  if (study.idx >= study.queue.length) showDone();
+  else renderStudyCard();
+}
+
+function showDone() {
+  const { correct, again, queue, deck } = study;
+  document.getElementById('prog-fill').style.width = '100%';
+  document.getElementById('study-counter').textContent = '';
+  const pct = Math.round((correct / queue.length) * 100);
+  document.getElementById('study-body').innerHTML = `
+    <div class="done-wrap">
+      <div class="done-card">
+        <div class="done-emoji">${pct >= 80 ? '🎉' : pct >= 50 ? '💪' : '📖'}</div>
+        <div class="done-title">Round complete!</div>
+        <div class="done-sub">You went through all ${queue.length} cards.</div>
+        <div class="stat-row">
+          <div class="stat-box">
+            <span class="stat-num" style="color:var(--green)">${correct}</span>
+            <span class="stat-lbl">Got it</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" style="color:var(--red)">${again}</span>
+            <span class="stat-lbl">Again</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">${pct}%</span>
+            <span class="stat-lbl">Score</span>
+          </div>
+        </div>
+        <button class="btn btn-blue btn-full" onclick="startStudy('${deck}')">Study again</button>
+      </div>
+    </div>`;
+  document.getElementById('study-btns').innerHTML = '';
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+loadCards().then(() => renderHome());
+</script>
+</body>
+</html>
