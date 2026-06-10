@@ -321,14 +321,14 @@
 
 <script>
 const DECKS = [
-  { id: 'procedures', name: 'Procedures', icon: '📋', bg: '#e8f4fd' },
-  { id: 'safety',     name: 'Safety',     icon: '🦺', bg: '#fff3e0' },
-  { id: 'technical',  name: 'Technical',  icon: '⚙️',  bg: '#f3e5f5' },
-  { id: 'general',    name: 'General',    icon: '📚', bg: '#e8f5e9' },
+  { id: 'limitations',  name: 'limitations',  icon: '🚫', bg: '#fff3e0' },
+  { id: 'memory-items', name: 'memory items', icon: '🧠', bg: '#e8f4fd' },
+  { id: 'procedures',   name: 'procedures',   icon: '📋', bg: '#e8f5e9' },
+  { id: 'rest',         name: 'rest',         icon: '😌', bg: '#f3e5f5' },
 ];
 
 let cards = [];
-let selDeck = 'procedures';
+let selDeck = DECKS[0].id;
 let study = {};
 
 // Storage: tries localStorage, then IndexedDB, then in-memory
