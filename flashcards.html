@@ -327,6 +327,50 @@ const DECKS = [
   { id: 'rest',         name: 'rest',         icon: '😌', bg: '#f3e5f5' },
 ];
 
+const INITIAL_CARDS = [
+  { id: 'lim-1',  deck: 'limitations', q: 'Rescue and Fire Fighting Services', a: 'cat 7' },
+  { id: 'lim-2',  deck: 'limitations', q: 'RA for cat 2/3', a: '1 for cat II, 2 for ct 3' },
+  { id: 'lim-3',  deck: 'limitations', q: 'Autoland angle and slope', a: 'GS angles 2,5/3,5, slope -1/+1*' },
+  { id: 'lim-4',  deck: 'limitations', q: 'Max structural masses', a: 'Ramp 62.700 - Takeoff 62.500 - Landing 54.000 - Zero fuel 51.850' },
+  { id: 'lim-5',  deck: 'limitations', q: 'Max operating speed', a: '29000ft=320kts then Mmo 0.82' },
+  { id: 'lim-6',  deck: 'limitations', q: 'Max flap extended speeds', a: '1/230 2/215 3/200 4,5/180 Full/165' },
+  { id: 'lim-7',  deck: 'limitations', q: 'Flap maneuver speeds', a: '1/180 2/160 3/150 4,5/140 Full/130' },
+  { id: 'lim-8',  deck: 'limitations', q: 'Landing gear speeds 3x', a: 'Max retract 220, Max extension 250, Vle 265' },
+  { id: 'lim-9',  deck: 'limitations', q: 'Turbulent Air Penetration', a: 'Below 10.000ft 250kts Above: lowest of 270 or 0,76' },
+  { id: 'lim-10', deck: 'limitations', q: 'Max tire GS (is a ground speed)', a: '195 kts' },
+  { id: 'lim-11', deck: 'limitations', q: 'Flight envelope', a: 'SAT-70, isa +39, min TAT in flight -54' },
+  { id: 'lim-12', deck: 'limitations', q: 'Xwind above 30kts', a: 'N1 max 60% below 20kts commander only' },
+  { id: 'lim-13', deck: 'limitations', q: 'Tailwind above 10kts', a: 'above 13kts: N1 max 60% below 20kts, above 10kts: commander only' },
+  { id: 'lim-14', deck: 'limitations', q: 'Max wind for Cat II APPR 2 & AUTOLAND 1', a: 'Headwing 2x25kts, Xwind cat2:18kts, cat3:15kts, tailwind 2x15kts' },
+  { id: 'lim-15', deck: 'limitations', q: 'Runway limitations', a: '-2% tot 2%, Min rwy width 30m, min twy width 15m, min rwy width for turn 25m' },
+  { id: 'lim-16', deck: 'limitations', q: 'Max cabin differential overpressure + Max differential t/o & landing', a: '8,8psi and 0,2psi' },
+  { id: 'lim-17', deck: 'limitations', q: 'Icing conditions', a: 'OAT on gnd or TAT in flight is 10* or less and visible moisture with 1600m or less or on gnd with contaminated gnd' },
+  { id: 'lim-18', deck: 'limitations', q: 'Run ups', a: 'every 30min with less then 3* and visible moisture' },
+  { id: 'lim-19', deck: 'limitations', q: 'Windshield wiper', a: 'Max speed 253kts max altitude 14.000ft' },
+  { id: 'lim-20', deck: 'limitations', q: 'anti ice on mcdu', a: 'below 5: ALL, between 5 and 10 (both included) ENG if possibility of vis moisture till 1700ft, so simple, ground temp is guiding' },
+  { id: 'lim-21', deck: 'limitations', q: 'Autopilot heights', a: 'Min engage(also n-1): 200ft, min use height: Cruise and descent 1000ft, ILS 80ft, LPV 80ft Non-prec 190ft couple GA loss 100ft' },
+  { id: 'lim-22', deck: 'limitations', q: 'Dimensions', a: 'Length 41 Height 10,7 Wingspan 35 (Length 41,6 Height 10,77 Wingspan 35,12)' },
+  { id: 'lim-23', deck: 'limitations', q: 'Engine limits N1/N2/ITT', a: 'Max N1&N2=100%, Max ITT Gnd/to/ga/in flight stat: 1054*, T/O GA power 5min (10min OEI) Max cont ITT 1017*' },
+  { id: 'lim-24', deck: 'limitations', q: 'Engine oil pressure', a: 'Pressure 50-175psi (oil temp below 49* 235psi)' },
+  { id: 'lim-25', deck: 'limitations', q: 'Engine oil temperature', a: 'Idle -40-163 Takeoff 24-163 (warmup: take off prohibited) Max 174 for 20min' },
+  { id: 'lim-26', deck: 'limitations', q: 'Starter cranking limits', a: '1e 2e en 3e total time 4min, dan 30min rest' },
+  { id: 'lim-27', deck: 'limitations', q: 'Max reverse', a: 'Max till 60kts stowed prior stopping (RTO or emergency landing: used until complete stop)' },
+  { id: 'lim-28', deck: 'limitations', q: 'APU limits', a: 'Max start altitude 39.000, Elec gen operation 39.000, Bleed 15.000, Rotor speed 108% EGT 1032*C (no limit in amber range)' },
+  { id: 'lim-29', deck: 'limitations', q: 'APU starter limits', a: '1e2 60s OFF 3rd 5min OFF, above ISA +35 up to 39: 1e: 60s OFF 2nd 5min OFF' },
+  { id: 'lim-30', deck: 'limitations', q: 'Max altitude flaps extended', a: '20.000ft' },
+  { id: 'lim-31', deck: 'limitations', q: 'Max holding speeds', a: 'till 14000ft: 230, 14-20.000ft: 240, 20-34.000ft: 265, above 34.000ft M0.82' },
+  { id: 'lim-32', deck: 'limitations', q: 'Max usable fuel', a: '2190&9310 (reduced by 130kg if main ejector pump is inop) total 13690' },
+  { id: 'lim-33', deck: 'limitations', q: 'Max fuel imbalance', a: '360kg' },
+  { id: 'lim-34', deck: 'limitations', q: 'Minumum fuel tank temperature', a: '-37*' },
+  { id: 'lim-35', deck: 'limitations', q: 'Max wind with doors open', a: 'main and service doors 65kts, cargo doors 40kts, above 40kts start closing them' },
+  { id: 'lim-36', deck: 'limitations', q: 'In FZFG conditions, with OAT ≤ +3°C:', a: 'VIS < 110m —> No Startup nor Takeoff allowed and avoid using high thrust settings during taxi-in.' },
+  { id: 'lim-37', deck: 'limitations', q: 'Cargo smoke on ground', a: '(Annun: press 2x, non annunc: press 3x) + don’t open holds + disembark / evacuate pax + don’t shoot if open' },
+  { id: 'lim-38', deck: 'limitations', q: 'TCAS', a: 'A/P and A/T off' },
+  { id: 'lim-39', deck: 'limitations', q: 'ciclring approach', a: 'Alt bug to MDA - GD/FL3 (FMS or 150) - (+- 45°) - time 30sec - Abeam time - Final descent: flaps 5+CL' },
+  { id: 'lim-40', deck: 'limitations', q: 'Fire/smoke other', a: '“Smoke MA” headset off, mask on, headset on, MA completed my controls, my radio my CL: checklist, MAY DAY, cabin: inform quickly, stay seated, will do evac, wait for my command! Inform ATC, prep approach, on landing: att CC on station att CC on station' },
+  { id: 'lim-41', deck: 'limitations', q: 'Cat2/3', a: 'NO flare > GA, No autoland > A/P off, wind' },
+];
+
 let cards = [];
 let selDeck = DECKS[0].id;
 let study = {};
@@ -544,7 +588,13 @@ function showToast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-loadCards().then(() => renderHome());
+loadCards().then(() => {
+  if (cards.length === 0) {
+    cards = [...INITIAL_CARDS];
+    persist();
+  }
+  renderHome();
+});
 </script>
 </body>
 </html>
