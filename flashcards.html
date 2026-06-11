@@ -325,7 +325,10 @@ const DECKS = [
   { id: 'memory-items', name: 'memory items', icon: '🧠', bg: '#e8f4fd' },
   { id: 'procedures',   name: 'procedures',   icon: '📋', bg: '#e8f5e9' },
   { id: 'rest',         name: 'rest',         icon: '😌', bg: '#f3e5f5' },
+  { id: 'repeat',       name: 'repeat',       icon: '🔁', bg: '#d0eaff' },
 ];
+
+const ADDABLE_DECKS = DECKS.filter(d => d.id !== 'repeat');
 
 const INITIAL_CARDS = [
   { id: 'lim-1',  deck: 'limitations', q: 'Rescue and Fire Fighting Services', a: 'cat 7' },
@@ -369,6 +372,94 @@ const INITIAL_CARDS = [
   { id: 'lim-39', deck: 'limitations', q: 'ciclring approach', a: 'Alt bug to MDA - GD/FL3 (FMS or 150) - (+- 45°) - time 30sec - Abeam time - Final descent: flaps 5+CL' },
   { id: 'lim-40', deck: 'limitations', q: 'Fire/smoke other', a: '“Smoke MA” headset off, mask on, headset on, MA completed my controls, my radio my CL: checklist, MAY DAY, cabin: inform quickly, stay seated, will do evac, wait for my command! Inform ATC, prep approach, on landing: att CC on station att CC on station' },
   { id: 'lim-41', deck: 'limitations', q: 'Cat2/3', a: 'NO flare > GA, No autoland > A/P off, wind' },
+];
+
+const INITIAL_MEMORY_ITEMS = [
+  { id: 'mem-1', deck: 'memory-items', q: 'ENG 1 (2) FIRE', a: `Autothrottle: DISENGAGE…
+N1 (operative engine): MIN 5% ABOVE N1 IDLE
+Affected engine
+            Thrust Lever: IDLE
+            START/STOP Selector: STOP
+            FIRE EXTINGUISHER Handle: PULL` },
+  { id: 'mem-2', deck: 'memory-items', q: 'APU FIRE', a: 'APU EMER STOP Button: PUSH IN' },
+  { id: 'mem-3', deck: 'memory-items', q: 'BATT 1 (2) OVERTEMP', a: 'Associated BATT Knob: OFF' },
+  { id: 'mem-4', deck: 'memory-items', q: 'CARGO COMPARTMENT FIRE', a: 'Associated Cargo Smoke Button: PUSH' },
+  { id: 'mem-5', deck: 'memory-items', q: 'SMOKE / FIRE / FUMES', a: `Crew Oxy Masks: DON, 100%…
+Crew Communication: ESTABLISH` },
+  { id: 'mem-6', deck: 'memory-items', q: 'SMOKE EVACUATION', a: `Crew Oxy Masks: DON, 100%…
+Crew Communication: ESTABLISH
+DUMP Button: PUSH IN` },
+  { id: 'mem-7', deck: 'memory-items', q: 'DUAL ENGINE FAILURE', a: `Airspeed: MIN 270 KIAS…
+RAT MANUAL DEPLOY Lever: PULL` },
+  { id: 'mem-8', deck: 'memory-items', q: 'ENGINE SEVERE DAMAGE OR SEPARATION', a: `Autothrottle: DISENGAGE…
+N1 (operative engine): MIN 5% ABOVE N1 IDLE
+Affected Engine:
+   Thrust Lever: IDLE.
+   START/STOP Selector: STOP
+   FIRE EXTINGUISHER Handle: PULL` },
+  { id: 'mem-9', deck: 'memory-items', q: 'ENGINE ABNORMAL START', a: 'Affected Engine: START/STOP Selector: STOP' },
+  { id: 'mem-10', deck: 'memory-items', q: 'CABIN ALTITUDE HI', a: `Crew Oxy Masks: DON, 100%…
+Crew Communication: ESTABLISH
+Altitude: 10’000ft or MEA, WHICHEVER IS HIGHER
+Thrust Levers: IDLE
+SPEEDBRAKE Lever: FULL OPEN
+Airspeed: MAX / APPROPRIATE
+Transponder: 7700` },
+  { id: 'mem-11', deck: 'memory-items', q: 'EMERGENCY DESCENT', a: `FSTN BELTS Switch: ON…
+Altitude: 10’000ft or MEA, WHICHEVER IS HIGHER
+Thrust Levers: IDLE
+SPEEDBRAKE Lever: FULL OPEN
+Airspeed: MAX / APPROPRIATE
+Transponder: 7700` },
+  { id: 'mem-12', deck: 'memory-items', q: 'JAMMED CONTROL COLUMN (PITCH)', a: 'ELEVATOR DISCONNECT Handle: PULL' },
+  { id: 'mem-13', deck: 'memory-items', q: 'JAMMED CONTROL WHEEL (ROLL)', a: 'AILERON DISCONNECT Handle: PULL' },
+  { id: 'mem-14', deck: 'memory-items', q: 'GEAR LEVER CAN NOT BE MOVED UP', a: `If climb performance required: …
+DN LOCK REL Button: PRESS and HOLD
+LANDING GEAR Lever: UP
+DN LOCK REL Button: RELEASE` },
+];
+
+const INITIAL_PROCEDURES = [
+  { id: 'proc-1', deck: 'procedures', q: 'Go around', a: 'press TOGA - Vref: flaps 2/4 - gear up check FMS - (check GA, FMS speeds and NAV source) climb sequence' },
+  { id: 'proc-2', deck: 'procedures', q: 'discontinued approach', a: '“D A” - alt hold + vert mode - flaps 2/4 - (FMS missed appr) gear up check fms - clb seq' },
+  { id: 'proc-3', deck: 'procedures', q: 'rejected landing', a: 'Before TD: GA, after TD: disconnect A/P+A/T >manual GA' },
+  { id: 'proc-4', deck: 'procedures', q: 'Non precision', a: '2 miles to go - temp comp - set lower alt and later missed alt - alt vs distance' },
+  { id: 'proc-5', deck: 'procedures', q: 'RNP approach', a: 'check FMS (crs, path, dis, gps, raim) RNP CL - 2Nm appr' },
+  { id: 'proc-6', deck: 'procedures', q: 'Terrain', a: '“pull up” - “terrain go” - disen AP - thrust max -15* or PLI' },
+  { id: 'proc-7', deck: 'procedures', q: 'N-1 TO', a: 'Engine malfunction - check thrust -200ft A/P on - 400ft heading/bank/EO - effra check >Vfs - continuous (call outs-200-400-1000)' },
+  { id: 'proc-8', deck: 'procedures', q: 'N-1 TO without EO AUTO (fire or separation)', a: '400ft select heading/bank/EO, Effra FLCH and Vfs' },
+  { id: 'proc-9', deck: 'procedures', q: 'N-1 approaches', a: 'before 1000ft rudder trim neutral + fuel xfeed off' },
+  { id: 'proc-10', deck: 'procedures', q: 'N-1 GA', a: 'GA-RSV - 400ft bank/EO (speeds?) - “Continuous”, or during: NNC after cont' },
+  { id: 'proc-11', deck: 'procedures', q: 'Engine failure during cruise', a: '“Engine malfunction” “continuous” checks/set TO/GA, CON “continious set” - Confirms (or select) EO on MCDU - checks/set TO/GA, CON, EO MAX ALT, SPD (GD) +FLCH - Select altitude' },
+  { id: 'proc-12', deck: 'procedures', q: 'WS', a: '“WS GO” + TO/GA + MAX thrust - “Thrust max” (without: A/P off +15*) - Out of windshear > back to TOGA and push TOGA then check Gear > flaps > lateral > vertical via either GA or Climb sequence' },
+  { id: 'proc-13', deck: 'procedures', q: 'RTO', a: 'REJECT - autobrake - A/T off - reverse - 60kts … PB + FL5' },
+  { id: 'proc-14', deck: 'procedures', q: 'Emergency Evacuation', a: 'att cc on station - NNC - (may day/position/reason/pax/crew/fuel) CL check doors' },
+  { id: 'proc-15', deck: 'procedures', q: 'APU FIRE', a: 'MA push in - CL will only fire the bottle' },
+  { id: 'proc-16', deck: 'procedures', q: 'Emer descent 2x', a: 'masks and 4 calls - 123-45-6-7 ALT/HDG/FLCH(2) - idle + speedbrakes - speed max - CL' },
+  { id: 'proc-17', deck: 'procedures', q: 'Cargo smoke on ground', a: '(Annun: press 2x, non annunc: press 3x) + don’t open holds + disembark / evacuate pax + don’t shoot if open' },
+  { id: 'proc-18', deck: 'procedures', q: 'TCAS', a: 'A/P and A/T off' },
+  { id: 'proc-19', deck: 'procedures', q: 'ciclring approach', a: 'Alt bug to MDA - GD/FL3 (FMS or 150) - (+- 45°) - time 30sec - Abeam time - Final descent: flaps 5+CL' },
+  { id: 'proc-20', deck: 'procedures', q: 'Fire/smoke other', a: '“Smoke MA” headset off, mask on, headset on, MA completed my controls, my radio my CL: checklist, MAY DAY, cabin: inform quickly, stay seated, will do evac, wait for my command! Inform ATC, prep approach, on landing: att CC on station att CC on station' },
+  { id: 'proc-21', deck: 'procedures', q: 'Cat2/3', a: 'NO flare > GA, No autoland > A/P off, wind' },
+];
+
+const INITIAL_REST = [
+  { id: 'rest-1', deck: 'rest', q: 'Callouts', a: 'Purser report to cockpit 2x, Att cabin crew on station 2x, Keep your seats, all normal, Safety position, Evacuate (3x) Att CC (prepare for a) rapid descent, Rapid descent complete, Flight deck secure' },
+  { id: 'rest-2', deck: 'rest', q: 'Controlled disembarkation', a: '1 tell atc 2 let copi do after landing items and or EVAC CL as reference to leave 3 “Ladies and gentlemen, this is your captain speaking. This is an unusual situation which requires you to leave the aircraft as quickly as possible via the entrance door(s). Take all your luggage with you and follow the instructions of the guiding agents or crew outside the aircraft. Cabin crew, open doors.”' },
+  { id: 'rest-3', deck: 'rest', q: 'unusual flaps/slat approach', a: '-really take your time, check min/maxspeed, be aware of max tire speed 195' },
+  { id: 'rest-4', deck: 'rest', q: 'Emergency landing PA', a: 'Ladies and Gentlemen this is the captain speaking! May I have your attention please. We find ourselves in a situation which calls for discipline and complete cooperation from you side. DUE TO…The flight crew are thoroughly trained to cope with such an emergency situation. It is very important that you follow the instructions from the cabin crew carefully. Thank you for your attention.' },
+  { id: 'rest-5', deck: 'rest', q: 'Hijack (RM)', a: '“Captain I must come to the cockpit”: Keep door locked, check cabin and prep immediate landing squawk 7500 (75 are they still alive) “Flight Deck Secure” to ATC No PAN PAN nor MAY DAY RM for interception signals' },
+  { id: 'rest-6', deck: 'rest', q: 'Unruly pax', a: 'Close door, stay inside, possibility to divert, radio ahead for police assistance, possibility to order a restrain, possibility to let them give a PWA (II) (dont forget the witness) ESP1 in luxe to disembark on the ground Failure to follow commands of the Captain is a legal offence 1: Verbal/Single 2: Repetative/threat 3: Physical Endanger safety 4 attempt breach' },
+  { id: 'rest-7', deck: 'rest', q: 'Lost comm', a: 'Visual? OR maintain last assigned speed and level, or minimum flight altitude if higher, for a period of 7 MIN following setting of 7600 or last compulsory reporting point - then as filed (adjust speed and level according flight plan) - RV: proceed offset using RNAV without a specified limit, proceed in the most direct manner possible to rejoin the current flight plan route no later than the next significant point, taking into consideration the applicable minimum flight altitude; and Hold over fix (DIK, as per LIDO) descent close to EAT and try approach' },
+  { id: 'rest-8', deck: 'rest', q: 'Sick Pax', a: 'ask: age-(fe)male-problem, seating position, can he move, speaks, answers, breaths, where hurt > “medical emergency”+SOB+PROBLEM+AGE+M/F' },
+  { id: 'rest-9', deck: 'rest', q: 'Engine fire during s/u', a: 'Stop pushback, set parking brake, ask for fire brigade + attention CC on station 2x: Memory actions>CL>evt EVAC' },
+  { id: 'rest-10', deck: 'rest', q: 'Fuel Issues', a: 'Change > Less then final reserve fuel: “minimum fuel”, Will land with less then FRF “may day, fuel”' },
+  { id: 'rest-11', deck: 'rest', q: 'Air return', a: 'Ladies and gentlemen, your captain speaking, due to a (minor) technical problem with our aircraft, (OPTION TO SPECIFY) we have decided to return to ____ and we expect to land there in ___ minutes. More information about your onward transportation will be given after landing. We apologize for the inconvenience and thank you for your understanding.' },
+  { id: 'rest-12', deck: 'rest', q: 'Forced landing', a: '“my radios my controls Dual Engine failure MA” > NNC, with speed 270 you can try to start both engines at same time, GD> max flaps possible alt gear ext, speed min 130 “Safety position” this CL iso evac' },
+  { id: 'rest-13', deck: 'rest', q: 'Bomb warning', a: '“anonymous call under investigation” > either “after investigation, anonymous call disregarded” or “ credible” Use CRP bomb warning checklist MAY DAY 7700 emergency land ASAP “purser report to cockpit” > NITS briefing to cabin, including a order of discreet search cockpit search by cabin QRH and bomb search checklist in techlog only row by row search (45min) if not possible to land ASAP Announcement in CRP LRBL or move pax away from item After landing: controlled disembarkation' },
+  { id: 'rest-14', deck: 'rest', q: 'Electrical Emergency', a: '”My control My radio”, ”May Day 3x, CL, without APU: No A/P, A/T, FD, AB, REV, RA, callouts, steering, DU2/3 MCDU1, cabin normal mode, min 150kts for RAT, FL3 approach' },
+  { id: 'rest-15', deck: 'rest', q: 'Unreliable speeds', a: '2*(7* flaps) and 70%, ias = tas-alt/2, GS>wind>TAS>pressure/temp>IAS, GPS altitude and speed' },
+  { id: 'rest-16', deck: 'rest', q: 'Run up', a: 'minimum of 60% N1 for 10 s or until fan vibration level returns to normal' },
 ];
 
 let cards = [];
@@ -435,7 +526,9 @@ function goAdd() {
 function renderHome() {
   const el = document.getElementById('deck-list');
   el.innerHTML = DECKS.map(d => {
-    const n = cards.filter(c => c.deck === d.id).length;
+    const n = d.id === 'repeat'
+      ? cards.filter(c => c.repeat).length
+      : cards.filter(c => c.deck === d.id).length;
     return `<div class="list-row" onclick="startStudy('${d.id}')">
       <div class="deck-icon" style="background:${d.bg}">${d.icon}</div>
       <div class="deck-info">
@@ -448,7 +541,7 @@ function renderHome() {
 }
 
 function renderAddView() {
-  document.getElementById('deck-opts').innerHTML = DECKS.map(d => `
+  document.getElementById('deck-opts').innerHTML = ADDABLE_DECKS.map(d => `
     <div class="deck-opt" onclick="pickDeck('${d.id}')">
       <span style="font-size:20px">${d.icon}</span>
       <span class="deck-opt-name">${d.name}</span>
@@ -465,7 +558,7 @@ function saveCard() {
   const q = document.getElementById('inp-q').value.trim();
   const a = document.getElementById('inp-a').value.trim();
   if (!q || !a) { showToast('Add a question and answer first'); return; }
-  cards.push({ id: Date.now(), deck: selDeck, q, a });
+  cards.push({ id: Date.now(), deck: selDeck, q, a, repeat: false });
   persist();
   document.getElementById('inp-q').value = '';
   document.getElementById('inp-a').value = '';
@@ -475,7 +568,9 @@ function saveCard() {
 
 function startStudy(deckId) {
   const deck = DECKS.find(d => d.id === deckId);
-  const pool = cards.filter(c => c.deck === deckId);
+  const pool = deckId === 'repeat'
+    ? cards.filter(c => c.repeat)
+    : cards.filter(c => c.deck === deckId);
   document.getElementById('study-title').textContent = deck.name;
   if (pool.length === 0) {
     showView('view-study');
@@ -538,7 +633,18 @@ function flipCard() {
 }
 
 function markCard(ok) {
-  if (ok) study.correct++; else study.again++;
+  const card = study.queue[study.idx];
+  if (!ok) {
+    study.again++;
+    card.repeat = true;
+    persist();
+  } else {
+    study.correct++;
+    if (study.deck === 'repeat' && card.repeat) {
+      card.repeat = false;
+      persist();
+    }
+  }
   study.idx++;
   if (study.idx >= study.queue.length) showDone();
   else renderStudyCard();
@@ -589,9 +695,19 @@ function showToast(msg) {
 }
 
 loadCards().then(() => {
+  const initialCards = [...INITIAL_CARDS, ...INITIAL_MEMORY_ITEMS, ...INITIAL_PROCEDURES, ...INITIAL_REST];
   if (cards.length === 0) {
-    cards = [...INITIAL_CARDS];
+    cards = initialCards;
     persist();
+  } else {
+    let needsPersist = false;
+    initialCards.forEach(initCard => {
+      if (!cards.some(c => c.id === initCard.id)) {
+        cards.push({ ...initCard, repeat: initCard.repeat || false });
+        needsPersist = true;
+      }
+    });
+    if (needsPersist) persist();
   }
   renderHome();
 });
