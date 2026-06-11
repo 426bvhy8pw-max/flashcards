@@ -238,6 +238,9 @@
   .empty-title { font-size: 18px; font-weight: 600; color: var(--text); }
   .empty-sub { font-size: 15px; color: var(--text2); }
 
+
+  /* RANDOM MIX BUTTON */
+  .btn-orange { background: #ff9500; color: #fff; }
   /* TOAST */
   .toast {
     position: fixed; bottom: calc(var(--safe-bottom) + 20px);
@@ -262,6 +265,16 @@
     </div>
     <div class="nav-large">My Decks</div>
     <div class="scroll" id="home-scroll">
+      <div class="list-group" style="margin-bottom:0">
+        <div class="list-row" onclick="startRandom()">
+          <div class="deck-icon" style="background:#e8f4ff">🎲</div>
+          <div class="deck-info">
+            <div class="deck-name">Random</div>
+            <div class="deck-sub" id="random-sub">0 cards</div>
+          </div>
+          <span class="row-chevron">›</span>
+        </div>
+      </div>
       <div class="section-label">Decks</div>
       <div class="list-group" id="deck-list"></div>
     </div>
@@ -516,6 +529,21 @@ function goHome() {
   renderHome();
   showView('view-home');
 }
+
+function startRandom() {
+  // Combine all cards from all decks (including repeat)
+  const allCards = cards.filter(c => DECKS.some(d => d.id === c.deck));
+  if (!allCards.length) {
+    showToast('No cards found across all decks');
+    return;
+  }
+  document.getElementById('study-title').textContent = '🎲 Random Mix';
+  const shuffled = [...allCards].sort(() => Math.random() - 0.5);
+  study = { deck: '__random__', queue: shuffled, idx: 0, flipped: false, correct: 0, again: 0 };
+  showView('view-study');
+  renderStudyCard();
+}
+
 function goAdd() {
   selDeck = selDeck || 'procedures';
   renderAddView();
@@ -524,6 +552,10 @@ function goAdd() {
 }
 
 function renderHome() {
+  const n = cards.filter(c => DECKS.some(d => d.id === c.deck)).length;
+  const repeatN = cards.filter(c => c.repeat).length;
+  const sub = document.getElementById('random-sub');
+  if (sub) sub.textContent = `${n} card${n !== 1 ? 's' : ''}`;
   const el = document.getElementById('deck-list');
   el.innerHTML = DECKS.map(d => {
     const n = d.id === 'repeat'
@@ -678,7 +710,15 @@ function showDone() {
         <button class="btn btn-blue btn-full" onclick="startStudy('${deck}')">Study again</button>
       </div>
     </div>`;
-  document.getElementById('study-btns').innerHTML = '';
+  const wrongCount = study.queue.filter(c => c.repeat).length;
+  document.getElementById('study-btns').innerHTML = study.deck === '__random__' && wrongCount > 0
+    ? `<button class="btn btn-orange btn-full" onclick="startRepeat()">🔁 Repeat ${wrongCount} wrong card${wrongCount!==1?'s':''}</button>`
+    : '';
+}
+
+
+function startRepeat() {
+  startStudy('repeat');
 }
 
 function escHtml(s) {
