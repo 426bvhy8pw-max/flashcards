@@ -473,6 +473,10 @@ const INITIAL_REST = [
   { id: 'rest-14', deck: 'rest', q: 'Electrical Emergency', a: '”My control My radio”, ”May Day 3x, CL, without APU: No A/P, A/T, FD, AB, REV, RA, callouts, steering, DU2/3 MCDU1, cabin normal mode, min 150kts for RAT, FL3 approach' },
   { id: 'rest-15', deck: 'rest', q: 'Unreliable speeds', a: '2*(7* flaps) and 70%, ias = tas-alt/2, GS>wind>TAS>pressure/temp>IAS, GPS altitude and speed' },
   { id: 'rest-16', deck: 'rest', q: 'Run up', a: 'minimum of 60% N1 for 10 s or until fan vibration level returns to normal' },
+  { id: 'rest-17', deck: 'rest', q: 'Rainbow lights', a: 'Orange: pax call from toilet, Flashing orange: Smoke in toilet, Blue: Pax call, Flashing Red: emergency call from cockpit, Green: Pilot call, Amber: Sterile light' },
+  { id: 'rest-18', deck: 'rest', q: 'Check FMS', a: 'check FMS speeds, fms NAV source and point flying to, also 3xGA' },
+  { id: 'rest-19', deck: 'rest', q: 'Planning minima alternate', a: 'Type A +200/+800 Type B +400/+1500' },
+  { id: 'rest-20', deck: 'rest', q: 'Capt landing', a: '+100/+700 & +200/+1000' },
 ];
 
 let cards = [];
@@ -608,11 +612,15 @@ function startStudy(deckId) {
     showView('view-study');
     document.getElementById('prog-fill').style.width = '0%';
     document.getElementById('study-counter').textContent = '';
+    const emptyTitle = deckId === 'repeat' ? 'No repeat cards yet' : 'No cards yet';
+    const emptySub = deckId === 'repeat'
+      ? 'Mark cards “Again” during study to add them to the repeat deck.'
+      : 'Tap "+ Add" to create your first card.';
     document.getElementById('study-body').innerHTML = `
       <div class="empty">
         <div class="empty-icon">📭</div>
-        <div class="empty-title">No cards yet</div>
-        <div class="empty-sub">Tap "+ Add" to create your first card.</div>
+        <div class="empty-title">${emptyTitle}</div>
+        <div class="empty-sub">${emptySub}</div>
       </div>`;
     document.getElementById('study-btns').innerHTML = `
       <button class="btn btn-blue btn-full" onclick="goAdd()">Add a card</button>`;
