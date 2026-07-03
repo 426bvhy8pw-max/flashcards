@@ -168,19 +168,22 @@
   .tap-hint { font-size: 13px; color: var(--text3); margin-top: 14px; }
 
   /* BUTTONS */
-  .btn-row { display: flex; gap: 10px; padding: 0 16px 16px; flex-shrink: 0; }
+  .btn-row { display: flex; gap: 10px; padding: 0 16px 16px; flex-shrink: 0; flex-wrap: wrap; }
   .btn {
     flex: 1; height: 52px; border-radius: 14px; border: none;
     font-size: 16px; font-weight: 600; cursor: pointer;
     font-family: inherit; display: flex; align-items: center;
     justify-content: center; gap: 6px; transition: opacity 0.12s, transform 0.12s;
+    min-width: 0;
   }
   .btn:active { opacity: 0.75; transform: scale(0.97); }
+  .btn:disabled { cursor: not-allowed; }
   .btn-blue { background: var(--blue); color: #fff; }
   .btn-green { background: var(--green); color: #fff; }
   .btn-red { background: var(--red); color: #fff; }
   .btn-gray { background: var(--card); color: var(--text); }
   .btn-full { width: 100%; flex: none; }
+  .btn-row .btn:nth-child(n+3) { flex: 0.8; }
 
   /* DONE CARD */
   .done-wrap { padding: 16px; }
@@ -354,7 +357,7 @@ const INITIAL_CARDS = [
   { id: 'lim-8',  deck: 'limitations', q: 'Landing gear speeds 3x', a: 'Max retract 220, Max extension 250, Vle 265' },
   { id: 'lim-9',  deck: 'limitations', q: 'Turbulent Air Penetration', a: 'Below 10.000ft 250kts Above: lowest of 270 or 0,76' },
   { id: 'lim-10', deck: 'limitations', q: 'Max tire GS (is a ground speed)', a: '195 kts' },
-  { id: 'lim-11', deck: 'limitations', q: 'Flight envelope', a: 'SAT-70, isa +39, min TAT in flight -54' },
+  { id: 'lim-11', deck: 'limitations', q: 'Flight envelope(temps)', a: 'SAT-70, isa +39, min TAT in flight -54, t/o&landing -45' },
   { id: 'lim-12', deck: 'limitations', q: 'Xwind above 30kts', a: 'N1 max 60% below 20kts commander only' },
   { id: 'lim-13', deck: 'limitations', q: 'Tailwind above 10kts', a: 'above 13kts: N1 max 60% below 20kts, above 10kts: commander only' },
   { id: 'lim-14', deck: 'limitations', q: 'Max wind for Cat II APPR 2 & AUTOLAND 1', a: 'Headwing 2x25kts, Xwind cat2:18kts, cat3:15kts, tailwind 2x15kts' },
@@ -654,7 +657,9 @@ function renderStudyCard() {
       </div>
     </div>`;
   document.getElementById('study-btns').innerHTML = `
-    <button class="btn btn-blue btn-full" onclick="flipCard()">Reveal answer</button>`;
+    <button class="btn btn-blue btn-full" onclick="flipCard()">Reveal answer</button>
+    <button class="btn btn-gray" onclick="goToPreviousCard()" ${idx === 0 ? 'disabled style="opacity:0.5"' : ''}>‹ Prev</button>
+    <button class="btn btn-gray" onclick="goToNextCard()" ${idx >= queue.length - 1 ? 'disabled style="opacity:0.5"' : ''}>Next ›</button>`;
 }
 
 function flipCard() {
@@ -662,13 +667,18 @@ function flipCard() {
   if (!inner) return;
   study.flipped = !study.flipped;
   inner.classList.toggle('flipped', study.flipped);
+  const { queue, idx } = study;
   if (study.flipped) {
     document.getElementById('study-btns').innerHTML = `
       <button class="btn btn-red" onclick="markCard(false)">Again</button>
-      <button class="btn btn-green" onclick="markCard(true)">Got it ✓</button>`;
+      <button class="btn btn-green" onclick="markCard(true)">Got it ✓</button>
+      <button class="btn btn-gray" onclick="goToPreviousCard()" ${idx === 0 ? 'disabled style="opacity:0.5"' : ''}>‹ Prev</button>
+      <button class="btn btn-gray" onclick="goToNextCard()" ${idx >= queue.length - 1 ? 'disabled style="opacity:0.5"' : ''}>Next ›</button>`;
   } else {
     document.getElementById('study-btns').innerHTML = `
-      <button class="btn btn-blue btn-full" onclick="flipCard()">Reveal answer</button>`;
+      <button class="btn btn-blue btn-full" onclick="flipCard()">Reveal answer</button>
+      <button class="btn btn-gray" onclick="goToPreviousCard()" ${idx === 0 ? 'disabled style="opacity:0.5"' : ''}>‹ Prev</button>
+      <button class="btn btn-gray" onclick="goToNextCard()" ${idx >= queue.length - 1 ? 'disabled style="opacity:0.5"' : ''}>Next ›</button>`;
   }
 }
 
@@ -688,6 +698,24 @@ function markCard(ok) {
   study.idx++;
   if (study.idx >= study.queue.length) showDone();
   else renderStudyCard();
+}
+
+function goToNextCard() {
+  study.idx++;
+  if (study.idx >= study.queue.length) {
+    study.idx = study.queue.length - 1;
+    return;
+  }
+  renderStudyCard();
+}
+
+function goToPreviousCard() {
+  study.idx--;
+  if (study.idx < 0) {
+    study.idx = 0;
+    return;
+  }
+  renderStudyCard();
 }
 
 function showDone() {
