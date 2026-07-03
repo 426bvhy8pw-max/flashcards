@@ -778,8 +778,14 @@ loadCards().then(() => {
   } else {
     let needsPersist = false;
     initialCards.forEach(initCard => {
-      if (!cards.some(c => c.id === initCard.id)) {
+      const existingCard = cards.find(c => c.id === initCard.id);
+      if (!existingCard) {
         cards.push({ ...initCard, repeat: initCard.repeat || false });
+        needsPersist = true;
+      } else if (existingCard.q !== initCard.q || existingCard.a !== initCard.a) {
+        // Update card if question or answer changed
+        existingCard.q = initCard.q;
+        existingCard.a = initCard.a;
         needsPersist = true;
       }
     });
